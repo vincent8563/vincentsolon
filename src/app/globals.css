@@ -47,7 +47,7 @@ html, body {
   background-clip: text;
 }
 
-/* Force readable text in dark mode for Tailwind classes */
+/* Force readable text colors in dark mode */
 .dark .text-gray-600 { color: rgb(209 213 219) !important; }
 .dark .text-gray-500 { color: rgb(209 213 219) !important; }
 .dark .text-gray-700 { color: rgb(229 231 235) !important; }
