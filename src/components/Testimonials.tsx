@@ -24,7 +24,7 @@ const Testimonials = () => {
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className="relative rounded-2xl p-7 border border-gray-200 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-300 shadow-md hover:shadow-xl bg-white dark:bg-gray-800 flex flex-col"
+              className="relative rounded-2xl p-7 border border-gray-200 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-300 shadow-md hover:shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm flex flex-col"
             >
               <Quote className="absolute top-5 right-5 text-indigo-200 dark:text-indigo-900" size={36} />
               <div className="flex gap-1 mb-5">
@@ -32,7 +32,7 @@ const Testimonials = () => {
                   <Star key={j} size={15} className="text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
-              <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-sm flex-1">
+              <p className="text-gray-800 dark:text-gray-100 mb-6 leading-relaxed text-sm flex-1">
                 "{t.content}"
               </p>
               <div className="pt-5 border-t border-gray-100 dark:border-gray-700">
