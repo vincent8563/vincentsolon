@@ -24,7 +24,15 @@ const infrastructureProjects = [
   { title: "Server Virtualization", category: "Virtualization", icon: Shield, description: "Migrated physical servers to VMware with automated firewall startup and Synology NAS backup.", technologies: ["VMware", "Ubuntu", "Synology NAS", "Firewall"], company: "Roberts Automotive" },
 ];
 
-type Project = typeof automationProjects[0];
+type Project = {
+  title: string;
+  category: string;
+  icon: any;
+  description: string;
+  technologies: string[];
+  company: string;
+  image?: string;
+};
 
 const ProjectCard = ({ project, onExpand }: { project: Project, onExpand: (p: Project) => void }) => (
   <div className="group rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-400 transition-all duration-300 shadow-md hover:shadow-xl h-full flex flex-col"
