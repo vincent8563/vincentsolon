@@ -16,7 +16,7 @@ const Testimonials = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
             What People Say
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
             Feedback from colleagues and managers I've had the privilege to work with.
           </p>
         </div>
@@ -24,19 +24,24 @@ const Testimonials = () => {
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className="relative rounded-2xl p-7 border border-gray-200 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-300 shadow-md hover:shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm flex flex-col"
+              style={{
+                backgroundColor: 'var(--card-bg)',
+                borderColor: 'var(--card-border)',
+              }}
+              className="relative rounded-2xl p-7 border hover:border-indigo-400 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col"
             >
-              <Quote className="absolute top-5 right-5 text-indigo-200 dark:text-indigo-900" size={36} />
+              <Quote className="absolute top-5 right-5 text-indigo-300 dark:text-indigo-600" size={36} />
               <div className="flex gap-1 mb-5">
                 {[...Array(t.rating)].map((_, j) => (
                   <Star key={j} size={15} className="text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
-              <p className="text-gray-800 dark:text-gray-100 mb-6 leading-relaxed text-sm flex-1">
+              <p className="mb-6 leading-relaxed text-sm flex-1"
+                style={{ color: 'var(--card-text)' }}>
                 "{t.content}"
               </p>
-              <div className="pt-5 border-t border-gray-100 dark:border-gray-700">
-                <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
+              <div className="pt-5 border-t" style={{ borderColor: 'var(--card-border)' }}>
+                <p className="font-semibold text-sm" style={{ color: 'var(--card-heading)' }}>{t.name}</p>
                 <p className="text-xs text-indigo-500 dark:text-indigo-400 mt-1">{t.company}</p>
               </div>
             </div>

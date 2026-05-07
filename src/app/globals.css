@@ -60,3 +60,19 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+
+/* Card variables - light mode */
+:root {
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: rgb(229 231 235);
+  --card-text: rgb(55 65 81);
+  --card-heading: rgb(17 24 39);
+}
+
+/* Card variables - dark mode */
+.dark {
+  --card-bg: rgba(30, 41, 59, 0.95);
+  --card-border: rgb(51 65 85);
+  --card-text: rgb(226 232 240);
+  --card-heading: rgb(248 250 252);
+}
