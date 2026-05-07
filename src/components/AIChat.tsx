@@ -6,7 +6,6 @@ export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [input, setInput] = useState('');
-  const [model, setModel] = useState('qwen2.5:1.5b');
   const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async () => {
@@ -21,7 +20,7 @@ export default function AIChat() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input, model }),
+        body: JSON.stringify({ message: input }),
       });
 
       const data = await res.json();
@@ -61,14 +60,7 @@ export default function AIChat() {
           {/* Header */}
           <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
             <h3 className="font-bold text-lg">AI Assistant</h3>
-            <select
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="text-sm bg-gray-100 dark:bg-gray-800 rounded px-2 py-1 border-none"
-            >
-              <option value="qwen2.5:1.5b">Qwen (Fast)</option>
-              <option value="deepseek-r1:1.5b">DeepSeek (Smart)</option>
-            </select>
+<span class="text-xs text-gray-400">Powered by Groq AI</span>
           </div>
 
           {/* Messages Area */}
