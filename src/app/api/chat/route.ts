@@ -64,7 +64,7 @@ Automation:
 
 IT Infrastructure:
 - Built complete IT infrastructure from ground up for Infinitecs Call Center
-- Managed multi-branch IT network across 6 locations for Acro Distribution (Fortinet, Ubiquiti, VLAN, VPN)
+- Managed multi-branch IT network across 6 locations for Acro Distribution
 - Recovered 14 years of historical emails for Roberts Automotive — zero data loss
 - Migrated servers to VMware with Synology NAS automated backup
 - Deployed Virtual Firewall with auto-start on VMware environment
@@ -79,27 +79,33 @@ IT Infrastructure:
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, model } = await request.json();
+    const { message } = await request.json();
 
-    const ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
-
-    const response = await fetch(`${ollamaUrl}/api/chat`, {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+      },
       body: JSON.stringify({
-        model: model || 'qwen2.5:1.5b',
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 500,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: message }
         ],
-        stream: false,
       }),
     });
 
     const data = await response.json();
-    return NextResponse.json({ reply: data.message.content });
+
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
+
+    return NextResponse.json({ reply: data.choices[0].message.content });
   } catch (error) {
-    console.error('Ollama API error:', error);
+    console.error('Groq API error:', error);
     return NextResponse.json({ error: 'AI service unavailable' }, { status: 503 });
   }
 }
