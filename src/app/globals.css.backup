@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+  --background: 249 250 251;
+  --foreground: 17 24 39;
+}
+
+.dark {
+  --background: 17 24 39;
+  --foreground: 249 250 251;
+}
+
+/* 🔑 FORCE BACKGROUND ON ROOT ELEMENTS */
+html, body {
+  height: 100%;
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glass Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.dark .glass {
+  background: rgba(31, 41, 55, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Text Gradient */
+.text-gradient {
+  background: linear-gradient(135deg, rgb(99 102 241), rgb(168 85 247));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Utilities */
+.bg-gradient-subtle { background: linear-gradient(135deg, rgb(var(--background)) 0%, rgb(243 244 246) 100%); }
+.dark .bg-gradient-subtle { background: linear-gradient(135deg, rgb(var(--background)) 0%, rgb(31 41 55) 100%); }
+.bg-gradient-glow { background: radial-gradient(circle, rgb(var(--primary) / 0.3) 0%, transparent 70%); }
+.hover-lift:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+canvas { mix-blend-mode: normal; }
