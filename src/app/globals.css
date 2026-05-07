@@ -76,3 +76,37 @@ html, body {
   --card-text: rgb(226 232 240);
   --card-heading: rgb(248 250 252);
 }
+
+/* Swiper pagination dots - visible sa dark mode */
+.dark .swiper-pagination-bullet {
+  background: rgb(148 163 184) !important;
+  opacity: 0.5;
+}
+.dark .swiper-pagination-bullet-active {
+  background: rgb(129 140 248) !important;
+  opacity: 1;
+}
+.swiper-pagination-bullet {
+  background: rgb(99 102 241) !important;
+  opacity: 0.4;
+}
+.swiper-pagination-bullet-active {
+  background: rgb(99 102 241) !important;
+  opacity: 1;
+}
+
+/* Swiper nav arrows dark mode */
+.dark .swiper-button-next,
+.dark .swiper-button-prev {
+  color: rgb(129 140 248) !important;
+}
+
+/* Tag variables */
+:root {
+  --tag-bg: rgb(238 242 255);
+  --tag-text: rgb(67 56 202);
+}
+.dark {
+  --tag-bg: rgb(49 46 129);
+  --tag-text: rgb(199 210 254);
+}

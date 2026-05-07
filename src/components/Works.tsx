@@ -72,7 +72,7 @@ const ProjectCard = ({ project, onExpand }: { project: Project, onExpand: (p: Pr
       </p>
       <div className="flex flex-wrap gap-2">
         {project.technologies.map((tech) => (
-          <span key={tech} className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-medium">
+          <span key={tech} className="px-2 py-1 rounded-md text-xs font-medium" style={{ backgroundColor: "var(--tag-bg)", color: "var(--tag-text)" }}>
             {tech}
           </span>
         ))}
@@ -112,7 +112,7 @@ const Lightbox = ({ project, onClose }: { project: Project, onClose: () => void 
         <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">{project.description}</p>
         <div className="flex flex-wrap gap-2">
           {project.technologies.map((tech) => (
-            <span key={tech} className="px-3 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium">
+            <span key={tech} className="px-3 py-1 rounded-md text-sm font-medium" style={{ backgroundColor: "var(--tag-bg)", color: "var(--tag-text)" }}>
               {tech}
             </span>
           ))}
