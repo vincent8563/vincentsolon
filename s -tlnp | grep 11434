@@ -1,0 +1,20 @@
+[0;1;32m●[0m ollama.service - Ollama Service
+     Loaded: loaded (]8;;file://ai-srv/etc/systemd/system/ollama.service/etc/systemd/system/ollama.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Thu 2026-05-07 02:20:43 UTC; 4h 26min ago
+   Main PID: 193 (ollama)
+      Tasks: 8[0;38;5;245m (limit: 9158)[0m
+     Memory: 47.4M
+        CPU: 367ms
+     CGroup: /system.slice/ollama.service
+             └─[0;38;5;245m193 /usr/local/bin/ollama serve[0m
+
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.703Z level=INFO source=images.go:524 msg="total unused blobs removed: 0"
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.705Z level=INFO source=routes.go:1847 msg="Listening on 127.0.0.1:11434 (version 0.22.1)"
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.710Z level=INFO source=runner.go:67 msg="discovering available GPUs..."
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.713Z level=INFO source=server.go:444 msg="starting runner" cmd="/usr/local/bin/ollama runner --ollama-engine --port 38579"
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.823Z level=INFO source=runner.go:106 msg="experimental Vulkan support disabled.  To enable, set OLLAMA_VULKAN=1"
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.823Z level=INFO source=server.go:444 msg="starting runner" cmd="/usr/local/bin/ollama runner --ollama-engine --port 42317"
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.887Z level=INFO source=types.go:60 msg="inference compute" id=cpu library=cpu compute="" name=cpu description=cpu libdirs=ollama driver="" pci_id="" type="" total="5.0 GiB" available="4.7 GiB"
+May 07 02:20:43 ai-srv ollama[193]: time=2026-05-07T02:20:43.887Z level=INFO source=routes.go:1897 msg="vram-based default context" total_vram="0 B" default_num_ctx=4096
+May 07 02:20:44 ai-srv ollama[193]: time=2026-05-07T02:20:44.928Z level=INFO source=model_recommendations.go:179 msg="model recommendations cache sleep scheduled" wait=4h23m56.159577992s consecutive_failures=0
+May 07 06:44:41 ai-srv ollama[193]: time=2026-05-07T06:44:41.587Z level=INFO source=model_recommendations.go:179 msg="model recommendations cache sleep scheduled" wait=4h41m34.039014859s consecutive_failures=0
