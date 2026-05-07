@@ -9,7 +9,7 @@ function formatMessage(text: string) {
   text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
   // Convert bullet points
   text = text.replace(/^[-•] (.+)/gm, '<li>$1</li>');
-  text = text.replace(/(<li>.*<\/li>)/gs, '<ul class="list-disc pl-4 my-1">$1</ul>');
+  text = text.replace(/(<li>.*<\/li>)/g, '<ul class="list-disc pl-4 my-1">$1</ul>');
   // Convert line breaks
   text = text.replace(/\n\n/g, '</p><p class="mt-2">');
   text = text.replace(/\n/g, '<br/>');
