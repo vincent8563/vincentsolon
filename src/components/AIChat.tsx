@@ -40,7 +40,6 @@ export default function AIChat() {
 
   return (
     <>
-      {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 
@@ -51,23 +50,22 @@ export default function AIChat() {
         💬
       </button>
 
-      {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-24 right-6 w-80 md:w-96 bg-white dark:bg-gray-900 
                         rounded-2xl shadow-2xl z-50 border border-gray-200 dark:border-gray-700 
                         flex flex-col max-h-[500px]">
           
-          {/* Header */}
           <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
-            <h3 className="font-bold text-lg">AI Assistant</h3>
-<span class="text-xs text-gray-400">Powered by Groq AI</span>
+            <h3 className="font-bold text-lg dark:text-white">AI Assistant</h3>
+            <span className="text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+              Powered by Groq
+            </span>
           </div>
 
-          {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.length === 0 ? (
               <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                👋 Hi! Ask me anything about my work, skills, or projects.
+                👋 Hi! Ask me anything about Vincent's work, skills, or experience.
               </p>
             ) : (
               messages.map((msg, idx) => (
@@ -84,24 +82,23 @@ export default function AIChat() {
             )}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-sm">
+                <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-sm dark:text-white">
                   Thinking... 🤔
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Area */}
           <div className="p-4 border-t dark:border-gray-700 flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder="Type your message..."
+              placeholder="Ask about Vincent..."
               disabled={isLoading}
               className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2 text-sm 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
             />
             <button
               onClick={sendMessage}
