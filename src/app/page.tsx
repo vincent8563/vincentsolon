@@ -54,8 +54,8 @@ export default function Home() {
           <section className="py-20 px-6">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-4xl font-bold mb-6 text-gradient">About Me</h2>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">IT Supervisor with 12+ years experience in enterprise IT infrastructure, networking, server administration, and cloud platforms.</p>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Specializing in Workflow Automation and AI-assisted systems using n8n, Zapier, Make, and external AI APIs.</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">IT Infrastructure Lead and Systems Administrator with 12+ years of experience across manufacturing, logistics, and service industries. Proven ability to build and run complete IT operations — from enterprise network deployments and server infrastructure to cloud administration and business process automation.</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Track record of managing multi-site environments, leading vendor relationships, and aligning technology with business objectives. Adept at working as the primary technical authority while coordinating with cross-functional and international teams.</p>
             </div>
           </section>
         );
@@ -100,7 +100,7 @@ export default function Home() {
                   <span className="font-medium text-gray-800 dark:text-gray-200">{label}</span>
                 </button>
               ))}
-              <a href="https://drive.google.com/file/d/18iRZj7Xo4mzmms0bSusNKaOzWcLE4KaV/view" target="_blank" rel="noopener noreferrer"
+              <a href="https://drive.google.com/file/d/13cehIHqq-tKRD3pJF-odTw9IZdECiAnO/view" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 glass rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition group shadow-md hover:shadow-lg hover:-translate-y-1">
                 <svg className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-indigo-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 <span className="font-medium text-gray-800 dark:text-gray-200">Resume</span>
