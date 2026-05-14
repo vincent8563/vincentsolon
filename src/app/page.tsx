@@ -54,7 +54,7 @@ export default function Home() {
           <section className="py-20 px-6">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-4xl font-bold mb-6 text-gradient">About Me</h2>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">IT Infrastructure Lead and Systems Administrator with 12+ years of experience across manufacturing, logistics, and service industries. Proven ability to build and run complete IT operations — from enterprise network deployments and server infrastructure to cloud administration and business process automation.</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">IT Infrastructure Lead and Systems Administrator with 12+ years of experience across manufacturing, logistics, and service industries. Proven ability to build and run complete IT operations from enterprise network deployments and server infrastructure to cloud administration and business process automation.</p>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Track record of managing multi-site environments, leading vendor relationships, and aligning technology with business objectives. Adept at working as the primary technical authority while coordinating with cross-functional and international teams.</p>
             </div>
           </section>
