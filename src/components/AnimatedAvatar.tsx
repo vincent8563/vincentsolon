@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-export default function AnimatedAvatar() {
+export default function AnimatedAvatar({ compact = false }: { compact?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -30,7 +30,7 @@ export default function AnimatedAvatar() {
   return (
     <div
       ref={containerRef}
-      className="relative w-48 h-48 md:w-56 md:h-56 rounded-full p-1 
+      className={`relative rounded-full p-1 ${compact ? "w-16 h-16" : "w-full h-full"} 
                  bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 
                  shadow-2xl"
     >
