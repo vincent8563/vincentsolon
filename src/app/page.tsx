@@ -8,16 +8,11 @@ import CursorGradient from '@/components/CursorGradient';
 import Works from '@/components/Works';
 import Testimonials from '@/components/Testimonials';
 
+type ViewType = 'home' | 'chat' | 'about' | 'projects' | 'skills' | 'testimonials';
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
-}
-
-interface ChatSession {
-  id: string;
-  title: string;
-  messages: Message[];
-  createdAt: Date;
 }
 
 function formatMessage(text: string) {
@@ -43,13 +38,11 @@ function CopyButton({ text }: { text: string }) {
 }
 
 export default function Home() {
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<'home' | 'chat' | 'about' | 'projects' | 'skills' | 'testimonials'>('home');
+  const [currentView, setCurrentView] = useState<ViewType>('home');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showPhone, setShowPhone] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -60,53 +53,26 @@ export default function Home() {
       setIsDark(true);
       document.documentElement.classList.add('dark');
     }
-    // Auto-close sidebar on mobile
-    if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [sessions, isLoading]);
+  }, [messages, isLoading]);
 
   const toggleDark = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle('dark');
   };
 
-  const activeSession = sessions.find(s => s.id === activeSessionId);
-  const activeMessages = activeSession?.messages || [];
-
-  const newChat = () => {
-    const id = Date.now().toString();
-    const session: ChatSession = { id, title: 'New Chat', messages: [], createdAt: new Date() };
-    setSessions(prev => [session, ...prev]);
-    setActiveSessionId(id);
-    setCurrentView('chat');
-    setInput('');
-    setTimeout(() => inputRef.current?.focus(), 100);
-  };
-
   const sendMessage = async (text?: string) => {
     const messageText = text || input;
     if (!messageText.trim() || isLoading) return;
 
-    let sessionId = activeSessionId;
-    if (!sessionId || currentView !== 'chat') {
-      const id = Date.now().toString();
-      const session: ChatSession = { id, title: messageText.slice(0, 40), messages: [], createdAt: new Date() };
-      setSessions(prev => [session, ...prev]);
-      sessionId = id;
-      setActiveSessionId(id);
-      setCurrentView('chat');
-    }
-
     const userMsg: Message = { role: 'user', content: messageText };
-    setSessions(prev => prev.map(s => s.id === sessionId
-      ? { ...s, title: s.messages.length === 0 ? messageText.slice(0, 40) : s.title, messages: [...s.messages, userMsg] }
-      : s
-    ));
+    setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
+    setCurrentView('chat');
 
     try {
       const res = await fetch('/api/chat', {
@@ -115,13 +81,9 @@ export default function Home() {
         body: JSON.stringify({ message: messageText }),
       });
       const data = await res.json();
-      const aiMsg: Message = { role: 'assistant', content: data.reply || 'Sorry, something went wrong.' };
-      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, messages: [...s.messages, aiMsg] } : s));
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'Sorry, something went wrong.' }]);
     } catch {
-      setSessions(prev => prev.map(s => s.id === sessionId
-        ? { ...s, messages: [...s.messages, { role: 'assistant', content: 'Error connecting to AI.' }] }
-        : s
-      ));
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Error connecting to AI.' }]);
     } finally {
       setIsLoading(false);
     }
@@ -129,11 +91,6 @@ export default function Home() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  };
-
-  const deleteSession = (id: string) => {
-    setSessions(prev => prev.filter(s => s.id !== id));
-    if (activeSessionId === id) { setActiveSessionId(null); setCurrentView('home'); }
   };
 
   const suggestions = [
@@ -144,141 +101,65 @@ export default function Home() {
   ];
 
   const navItems = [
-    { label: 'About', view: 'about' as const, emoji: '👤' },
-    { label: 'Projects', view: 'projects' as const, emoji: '💼' },
-    { label: 'Skills', view: 'skills' as const, emoji: '⚡' },
-    { label: 'Testimonials', view: 'testimonials' as const, emoji: '💬' },
+    { label: 'About', view: 'about' as ViewType, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /> },
+    { label: 'Projects', view: 'projects' as ViewType, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /> },
+    { label: 'Skills', view: 'skills' as ViewType, icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></> },
+    { label: 'Testimonials', view: 'testimonials' as ViewType, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /> },
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden relative">
+    <main className="min-h-screen relative overflow-hidden">
       <AnimatedBackground />
       <CursorGradient />
       <CursorTrail />
 
-      {/* ===== SIDEBAR ===== */}
-      <aside className={`relative z-20 flex flex-col border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex-shrink-0
-        ${sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'}`}
-        style={{ backgroundColor: 'var(--card-bg)' }}>
-        
-        <div className="flex flex-col h-full min-w-[256px]">
-          {/* Sidebar header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
-                <span className="text-white text-xs font-bold">VS</span>
-              </div>
-              <span className="font-semibold text-sm text-gray-800 dark:text-white">Vincent's AI</span>
-            </div>
-          </div>
+      {/* Dark mode toggle */}
+      <button onClick={toggleDark}
+        className="fixed top-5 right-5 z-50 p-2.5 glass rounded-full border border-gray-200 dark:border-gray-700 hover:border-indigo-400 transition shadow-md">
+        {isDark
+          ? <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          : <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        }
+      </button>
 
-          {/* New chat button */}
-          <div className="p-3">
-            <button onClick={newChat}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition text-sm text-gray-700 dark:text-gray-300">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-              New Chat
-            </button>
-          </div>
-
-          {/* Nav items */}
-          <div className="px-3 pb-2">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 px-2">Portfolio</p>
-            <button onClick={() => setCurrentView('home')}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition mb-1 ${currentView === 'home' ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-              <span>🏠</span> Home
-            </button>
-            {navItems.map(({ label, view, emoji }) => (
-              <button key={label} onClick={() => setCurrentView(view)}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition mb-1 ${currentView === view ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-                <span>{emoji}</span> {label}
-              </button>
-            ))}
-            <a href="https://drive.google.com/file/d/13cehIHqq-tKRD3pJF-odTw9IZdECiAnO/view?usp=drive_link"
-              target="_blank" rel="noopener noreferrer"
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition mb-1">
-              <span>📄</span> Resume
-            </a>
-          </div>
-
-          {/* Chat history */}
-          {sessions.length > 0 && (
-            <div className="px-3 flex-1 overflow-y-auto">
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 px-2">Recent Chats</p>
-              {sessions.map(session => (
-                <div key={session.id}
-                  className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-sm cursor-pointer transition mb-1 ${activeSessionId === session.id && currentView === 'chat' ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                  onClick={() => { setActiveSessionId(session.id); setCurrentView('chat'); }}>
-                  <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                  <span className="truncate flex-1">{session.title}</span>
-                  <button onClick={(e) => { e.stopPropagation(); deleteSession(session.id); }}
-                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 transition">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Sidebar footer */}
-          <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-r from-indigo-400 to-purple-500">
-              <img src="/avatar.png" alt="VS" className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-800 dark:text-white truncate">Vincent Solon</p>
-              <p className="text-xs text-gray-400 truncate">IT Supervisor</p>
-            </div>
-            <button onClick={toggleDark} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              {isDark
-                ? <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                : <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-              }
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* ===== MAIN CONTENT ===== */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
-        
-        {/* Top bar */}
-        <header className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0"
-          style={{ backgroundColor: 'var(--card-bg)' }}>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-          </button>
-          <button onClick={() => setCurrentView('home')}
-            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-          </button>
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {currentView === 'home' && 'Home'}
-            {currentView === 'chat' && (activeSession?.title || 'Chat')}
-            {currentView === 'about' && 'About'}
-            {currentView === 'projects' && 'Projects'}
-            {currentView === 'skills' && 'Skills'}
-            {currentView === 'testimonials' && 'Testimonials'}
-          </span>
-        </header>
+      <div className="relative z-10 min-h-screen flex flex-col">
 
         {/* ===== HOME VIEW ===== */}
         {currentView === 'home' && (
-          <div className="flex-1 overflow-y-auto flex flex-col">
-            <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 max-w-2xl mx-auto w-full">
-              
+          <div className="flex flex-col items-center justify-center min-h-screen px-6 py-12">
+            <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
+
               {/* Avatar */}
-              <div className="w-32 h-32 md:w-40 md:h-40 mb-5">
+              <div className="w-36 h-36 md:w-44 md:h-44 mb-5">
                 <AnimatedAvatar />
               </div>
-              <h1 className="text-3xl md:text-4xl font-extrabold text-gradient text-center mb-1">Vincent Solon</h1>
-              <p className="text-gray-500 dark:text-gray-400 text-center text-sm mb-6">
-                IT Infrastructure Lead & Workflow Automation Specialist — Bay, Laguna 🇵🇭
+
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gradient text-center mb-2">
+                Vincent Solon
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-center text-sm md:text-base mb-8">
+                IT Infrastructure Lead & Workflow Automation Specialist — Philippines
               </p>
 
+              {/* Nav buttons */}
+              <div className="flex flex-wrap justify-center gap-3 mb-6">
+                {navItems.map(({ label, view, icon }) => (
+                  <button key={label} onClick={() => setCurrentView(view)}
+                    className="flex items-center gap-2 px-5 py-2.5 glass rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-indigo-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">{icon}</svg>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</span>
+                  </button>
+                ))}
+                <a href="https://drive.google.com/file/d/13cehIHqq-tKRD3pJF-odTw9IZdECiAnO/view?usp=drive_link"
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-5 py-2.5 glass rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-indigo-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Resume</span>
+                </a>
+              </div>
+
               {/* Contact icons */}
-              <div className="flex gap-3 mb-8 flex-wrap justify-center">
+              <div className="flex gap-3 mb-8">
                 <div className="relative">
                   <button onClick={() => { setShowEmail(!showEmail); setShowPhone(false); }}
                     className={`p-2.5 glass rounded-xl border transition ${showEmail ? 'border-indigo-400 text-indigo-500' : 'border-gray-200 dark:border-gray-700 text-gray-500 hover:border-indigo-400'}`}>
@@ -314,8 +195,8 @@ export default function Home() {
               </div>
 
               {/* Suggestion chips */}
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Ask me anything or explore:</p>
-              <div className="flex flex-wrap gap-2 justify-center mb-4">
+              <p className="text-sm text-gray-400 mb-3">Ask me anything:</p>
+              <div className="flex flex-wrap gap-2 justify-center mb-6">
                 {suggestions.map(s => (
                   <button key={s} onClick={() => sendMessage(s)}
                     className="text-xs px-4 py-2 glass rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-400 hover:text-indigo-500 transition">
@@ -323,11 +204,9 @@ export default function Home() {
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Chat input on home */}
-            <div className="px-4 pb-6 max-w-2xl mx-auto w-full">
-              <div className="glass rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg px-4 py-3">
+              {/* Chat input */}
+              <div className="w-full glass rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg px-4 py-3">
                 <textarea ref={inputRef} value={input}
                   onChange={(e) => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }}
                   onKeyDown={handleKeyDown} placeholder="Ask me anything..." disabled={isLoading} rows={1}
@@ -347,22 +226,19 @@ export default function Home() {
 
         {/* ===== CHAT VIEW ===== */}
         {currentView === 'chat' && (
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-4 py-6 max-w-2xl mx-auto w-full space-y-6">
-              {activeMessages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-12">
-                  <p className="text-gray-400 text-sm">Start a conversation</p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {suggestions.map(s => (
-                      <button key={s} onClick={() => sendMessage(s)}
-                        className="text-xs px-3 py-1.5 glass rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-400 hover:text-indigo-500 transition">
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {activeMessages.map((msg, idx) => (
+          <div className="flex flex-col min-h-screen max-w-2xl mx-auto w-full px-4">
+            {/* Back button */}
+            <div className="pt-5 pb-2">
+              <button onClick={() => { setCurrentView('home'); setMessages([]); }}
+                className="flex items-center gap-2 px-4 py-2 glass rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-400 transition text-sm text-gray-600 dark:text-gray-300">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                Back to Home
+              </button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 py-4 space-y-6">
+              {messages.map((msg, idx) => (
                 <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                   <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-bold ${msg.role === 'user' ? 'bg-indigo-500' : 'bg-gradient-to-r from-indigo-500 to-purple-600'}`}>
                     {msg.role === 'user' ? 'You' : 'AI'}
@@ -390,7 +266,7 @@ export default function Home() {
             </div>
 
             {/* Chat input */}
-            <div className="px-4 pb-6 max-w-2xl mx-auto w-full flex-shrink-0">
+            <div className="sticky bottom-0 pb-6 pt-2">
               <div className="glass rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg px-4 py-3">
                 <textarea ref={inputRef} value={input}
                   onChange={(e) => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }}
@@ -411,16 +287,22 @@ export default function Home() {
 
         {/* ===== OTHER VIEWS ===== */}
         {(currentView === 'about' || currentView === 'projects' || currentView === 'skills' || currentView === 'testimonials') && (
-          <div className="flex-1 overflow-y-auto px-4 py-6">
+          <div className="min-h-screen px-6 py-8 max-w-5xl mx-auto w-full">
+            <button onClick={() => setCurrentView('home')}
+              className="mb-6 flex items-center gap-2 px-4 py-2 glass rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-400 transition text-sm text-gray-600 dark:text-gray-300">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+              Back to Home
+            </button>
+
             {currentView === 'about' && (
-              <div className="max-w-2xl mx-auto glass rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+              <div className="glass rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 className="text-2xl font-bold text-gradient mb-4">About Me</h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">IT Infrastructure Lead and Systems Administrator with 12+ years of experience across manufacturing, logistics, and service industries. Proven ability to build and run complete IT operations — from enterprise network deployments and server infrastructure to cloud administration and business process automation.</p>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">Track record of managing multi-site environments, leading vendor relationships, and aligning technology with business objectives. Adept at working as the primary technical authority while coordinating with cross-functional and international teams.</p>
               </div>
             )}
             {currentView === 'skills' && (
-              <div className="max-w-2xl mx-auto glass rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+              <div className="glass rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 className="text-2xl font-bold text-gradient mb-4">Skills & Expertise</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {['n8n','Zapier','Make.com','Power Automate','Fortinet','VMware ESXi','Proxmox','Microsoft 365','Google Workspace','Ubiquiti UniFi','Synology NAS','Ubuntu Server','pfSense','Azure AD','REST API / Webhooks'].map(skill => (
@@ -441,6 +323,6 @@ export default function Home() {
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
         .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
       `}</style>
-    </div>
+    </main>
   );
 }
