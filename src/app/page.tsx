@@ -6,6 +6,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import CursorTrail from '@/components/CursorTrail';
 import CursorGradient from '@/components/CursorGradient';
 import Works from '@/components/Works';
+import HireMe from '@/components/HireMe';
 import Testimonials from '@/components/Testimonials';
 
 type ViewType = 'home' | 'chat' | 'about' | 'projects' | 'skills' | 'testimonials';
@@ -44,6 +45,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
+  const [showHireMe, setShowHireMe] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -150,12 +152,18 @@ export default function Home() {
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</span>
                   </button>
                 ))}
-                <a href="https://drive.google.com/file/d/13cehIHqq-tKRD3pJF-odTw9IZdECiAnO/view?usp=drive_link"
-                  target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-5 py-2.5 glass rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 transition group shadow-sm hover:shadow-md hover:-translate-y-0.5">
-                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-indigo-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Resume</span>
-                </a>
+
+              </div>
+
+              {/* Hire Me button */}
+              <div className="mb-6">
+                <button onClick={() => setShowHireMe(true)}
+                  className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Hire Me
+                </button>
               </div>
 
               {/* Contact icons */}
@@ -299,6 +307,16 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-gradient mb-4">About Me</h2>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">IT Infrastructure Lead and Systems Administrator with 12+ years of experience across manufacturing, logistics, and service industries. Proven ability to build and run complete IT operations — from enterprise network deployments and server infrastructure to cloud administration and business process automation.</p>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">Track record of managing multi-site environments, leading vendor relationships, and aligning technology with business objectives. Adept at working as the primary technical authority while coordinating with cross-functional and international teams.</p>
+                <div className="mt-6">
+                  <a href="https://drive.google.com/file/d/13cehIHqq-tKRD3pJF-odTw9IZdECiAnO/view?usp=drive_link"
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download CV
+                  </a>
+                </div>
               </div>
             )}
             {currentView === 'skills' && (
@@ -318,6 +336,8 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {showHireMe && <HireMe onClose={() => setShowHireMe(false)} />}
 
       <style jsx>{`
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
